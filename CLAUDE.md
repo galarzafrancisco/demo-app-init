@@ -23,7 +23,9 @@ Manifest root: `install/manifests/`
 - `base/namespace.yaml`: namespace `demo-app-init`
 - `base/deployment.yaml`: single replica deployment using `ghcr.io/galarzafrancisco/demo-app-init:main`
 - `base/service.yaml`: ClusterIP service on port `80` to container port `8080`
-- `base/ingress.yaml`: Traefik ingress with TLS
+- `base/listener-set.yaml`: Gateway API HTTPS listener with TLS
+- `base/route.yaml`: Gateway API HTTPS application route
+- `base/https-redirect.yaml`: Gateway API HTTP-to-HTTPS redirect
 - `base/certificate.yaml`: cert-manager certificate
 - `overlays/main/env.env`: environment-specific values
 - `overlays/main/kustomization.yaml`: Kustomize replacements for overlay values
@@ -32,12 +34,13 @@ Manifest root: `install/manifests/`
 
 Current overlay values:
 
-- `HOST`: public hostname for ingress and certificate
+- `HOST`: public hostname for the Gateway API resources and certificate
 
 The `main` overlay replaces:
 
-- `Ingress.spec.rules[0].host`
-- `Ingress.spec.tls[0].hosts[0]`
+- `ListenerSet.spec.listeners[0].hostname`
+- `HTTPRoute.spec.hostnames[0]` in `route.yaml`
+- `HTTPRoute.spec.hostnames[0]` in `https-redirect.yaml`
 - `Certificate.spec.dnsNames[0]`
 
 ## GitHub Actions
@@ -69,7 +72,7 @@ Before first production deployment, confirm:
 
 - `install/manifests/overlays/main/env.env` has the real public hostname
 - cert-manager issuer name is correct for the cluster
-- Traefik is the correct ingress class for the cluster
+- the `public` Gateway in the `gateways` namespace is available
 
 ## spark-ops Expectations
 
