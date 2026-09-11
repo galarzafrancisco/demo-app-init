@@ -7,6 +7,8 @@ spec:
   dnsNames:
     - demo-app.american-broomstick.com
   secretName: demo-app-tls
+  privateKey:
+    rotationPolicy: Always
   issuerRef:
     name: letsencrypt-cluster-issuer
     kind: ClusterIssuer
